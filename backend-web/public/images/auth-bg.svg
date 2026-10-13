@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+    <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#0f766e" />
+            <stop offset="45%" stop-color="#115e59" />
+            <stop offset="100%" stop-color="#0f172a" />
+        </linearGradient>
+
+        <radialGradient id="glowAmber" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.45" />
+            <stop offset="100%" stop-color="#fbbf24" stop-opacity="0" />
+        </radialGradient>
+
+        <radialGradient id="glowEmerald" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#34d399" stop-opacity="0.40" />
+            <stop offset="100%" stop-color="#34d399" stop-opacity="0" />
+        </radialGradient>
+
+        <radialGradient id="glowCyan" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.30" />
+            <stop offset="100%" stop-color="#22d3ee" stop-opacity="0" />
+        </radialGradient>
+    </defs>
+
+    <rect width="1600" height="1000" fill="url(#bg)" />
+
+    <circle cx="220" cy="180" r="420" fill="url(#glowEmerald)" />
+    <circle cx="1450" cy="120" r="380" fill="url(#glowAmber)" />
+    <circle cx="1350" cy="900" r="460" fill="url(#glowCyan)" />
+    <circle cx="120" cy="920" r="300" fill="url(#glowEmerald)" />
+
+    <g fill="none" stroke="#ffffff" stroke-opacity="0.06">
+        <circle cx="800" cy="500" r="260" stroke-width="1.5" />
+        <circle cx="800" cy="500" r="380" stroke-width="1.5" />
+        <circle cx="800" cy="500" r="500" stroke-width="1.5" />
+        <circle cx="800" cy="500" r="620" stroke-width="1.5" />
+        <circle cx="800" cy="500" r="740" stroke-width="1.5" />
+    </g>
+
+    <g fill="#ffffff" fill-opacity="0.07">
+        <circle cx="180" cy="300" r="6" />
+        <circle cx="420" cy="140" r="4" />
+        <circle cx="620" cy="260" r="5" />
+        <circle cx="980" cy="180" r="6" />
+        <circle cx="1240" cy="320" r="4" />
+        <circle cx="1420" cy="520" r="5" />
+        <circle cx="300" cy="620" r="4" />
+        <circle cx="540" cy="780" r="6" />
+        <circle cx="900" cy="700" r="4" />
+        <circle cx="1120" cy="820" r="5" />
+        <circle cx="1380" cy="760" r="4" />
+        <circle cx="760" cy="120" r="5" />
+        <circle cx="240" cy="480" r="4" />
+        <circle cx="1080" cy="560" r="6" />
+    </g>
+
+    <path d="M-100 760 C 260 640, 520 880, 820 740 S 1320 620, 1740 800 L 1740 1060 L -100 1060 Z"
+        fill="#0f172a" fill-opacity="0.35" />
+    <path d="M-100 860 C 300 780, 600 960, 900 860 S 1400 780, 1740 920 L 1740 1060 L -100 1060 Z"
+        fill="#0f172a" fill-opacity="0.45" />
+</svg>
