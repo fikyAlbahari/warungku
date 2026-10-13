@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,14 +13,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Simpan di halaman pengaturan akan dilupakan begitu app dibuka ulang dan
 /// `--dart-define` yang salah untuk jaringan itu kembali dipakai.
 ///
-/// Default per platform penting untuk dipahami:
+/// Default sekarang menunjuk ke server online [productionBaseUrl], jadi app
+/// bisa langsung dipakai tanpa menyetel alamat. Kalau perlu server lain
+/// (IP LAN PC, emulator, atau tunnel) user bisa mengubahnya lewat halaman
+/// "Koneksi Server" tanpa build ulang:
 ///
-///  - Android Emulator : 10.0.2.2 adalah "localhost" milik PC host.
-///  - iOS Simulator    : memakai localhost biasa.
-///  - HP Android/iPhone ASLI : TIDAK bisa memakai 10.0.2.2 maupun localhost.
-///    Harus memakai IP LAN PC, misal http://192.168.10.57:8000. Karena itu
-///    default Android sengaja memakai IP LAN PC dan bisa dikoreksi user lewat
-///    [saveBaseUrl] tanpa perlu build ulang.
+///  - HP asli & emulator : pakai [productionBaseUrl] (kydev.online).
+///  - Emulator Android   : alternatif lokal 10.0.2.2 (localhost PC host).
+///  - iOS Simulator      : alternatif lokal localhost.
+///  - Server lokal PC    : IP LAN PC, misal http://192.168.10.57:8000.
 class ApiConfig {
   const ApiConfig._();
 
@@ -36,18 +35,22 @@ class ApiConfig {
 
   static String _activeBaseUrl = _resolve();
 
-  /// Default per platform tanpa melihat nilai yang tersimpan.
+  /// Alamat backend produksi yang sudah online.
   ///
-  /// Android memakai IP LAN PC, bukan 10.0.2.2, karena 10.0.2.2 hanya bermakna
-  /// di dalam emulator.
-  static String _platformDefault() {
-    if (Platform.isAndroid) return suggestionForPhysicalDevice;
-    return 'http://localhost:8000';
-  }
+  /// Dipakai sebagai default di semua platform supaya app langsung terhubung ke
+  /// server tanpa menyetel IP LAN. Server ini berjalan di HTTP (belum HTTPS) dan
+  /// membalas JSON Laravel di `/api/...`.
+  static const String productionBaseUrl = 'http://kydev.online';
+
+  /// Default tanpa melihat nilai yang tersimpan.
+  ///
+  /// Semua platform memakai [productionBaseUrl]. Alamat LAN/emulator tetap
+  /// tersedia sebagai pilihan cepat di [suggestions] untuk pengembangan lokal.
+  static String _defaultBaseUrl() => productionBaseUrl;
 
   static String _fallbackBaseUrl() {
     if (_override.isNotEmpty) return _normalize(_override);
-    return _platformDefault();
+    return _defaultBaseUrl();
   }
 
   /// Sumber kebenaran tunggal untuk `_activeBaseUrl`, dipakai setiap kali nilai
@@ -81,6 +84,7 @@ class ApiConfig {
   /// kuota dan bisa hilang, jadi alamat ini bukan pengganti IP LAN untuk pemakaian
   /// harian.
   static List<({String label, String url, String hint})> get suggestions => [
+        (label: 'Online', url: productionBaseUrl, hint: 'Server kydev.online'),
         (label: 'PC ini (Wi-Fi)', url: suggestionForPhysicalDevice, hint: 'HP Android asli'),
         (label: 'Emulator Android', url: 'http://10.0.2.2:8000', hint: 'Android Emulator'),
         (label: 'iOS Simulator', url: 'http://localhost:8000', hint: 'Simulator iPhone'),
