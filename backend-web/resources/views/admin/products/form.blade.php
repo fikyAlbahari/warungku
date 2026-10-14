@@ -20,15 +20,27 @@
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-medium text-slate-600">Kategori *</label>
-                    <select name="category_id" required
+                    <select name="category_id" id="category_id"
                             class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20">
                         <option value="">-- Pilih Kategori --</option>
                         @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" @selected(old('category_id', $product->category_id) == $category->id)>
+                            <option value="{{ $category->id }}" @selected((string) old('category_id', $product->category_id) === (string) $category->id)>
                                 {{ $category->name }}
                             </option>
                         @endforeach
+                        <option value="__baru__" @selected(old('category_id') === '__baru__')>+ Tambah kategori baru…</option>
                     </select>
+                    <div id="kategori-baru-wrapper" class="mt-2 {{ old('category_id') === '__baru__' ? '' : 'hidden' }}">
+                        <input type="text" name="new_category" value="{{ old('new_category') }}"
+                               placeholder="Nama kategori baru"
+                               class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20">
+                        @error('new_category')
+                            <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    @error('category_id')
+                        <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-medium text-slate-600">SKU</label>
@@ -50,7 +62,7 @@
                     <label class="mb-1 block text-xs font-medium text-slate-600">Satuan *</label>
                     <select name="unit" required
                             class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20">
-                        @foreach (['pcs', 'pack', 'box', 'kg', 'gram', 'liter', 'botol', 'biji', 'renteng', 'sachet'] as $unit)
+                        @foreach (['pcs', 'pack', 'box', 'kg', 'gram', 'biji', 'renteng', 'sachet'] as $unit)
                             <option value="{{ $unit }}" @selected(old('unit', $product->unit) === $unit)>{{ $unit }}</option>
                         @endforeach
                     </select>
@@ -117,4 +129,24 @@
             </a>
         </div>
     </form>
+
+    <script>
+        (function () {
+            const select = document.getElementById('category_id');
+            const wrapper = document.getElementById('kategori-baru-wrapper');
+            const input = wrapper ? wrapper.querySelector('input[name="new_category"]') : null;
+            if (!select || !wrapper || !input) return;
+
+            const sync = () => {
+                const isNew = select.value === '__baru__';
+                wrapper.classList.toggle('hidden', !isNew);
+                select.required = !isNew;
+                input.required = isNew;
+                if (isNew) input.focus();
+            };
+
+            select.addEventListener('change', sync);
+            sync();
+        })();
+    </script>
 @endsection

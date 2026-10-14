@@ -54,7 +54,9 @@ class ProductController extends Controller
     public function store(ProductRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $data['category_id'] = $this->resolveCategoryId($request);
         $data['image'] = $this->handleImage($request);
+        unset($data['new_category']);
 
         Product::create($data);
 
@@ -76,6 +78,8 @@ class ProductController extends Controller
     public function update(ProductRequest $request, Product $product): RedirectResponse
     {
         $data = $request->validated();
+        $data['category_id'] = $this->resolveCategoryId($request);
+        unset($data['new_category']);
 
         if ($request->hasFile('image')) {
             $this->deleteImage($product->image);
@@ -133,6 +137,17 @@ class ProductController extends Controller
         $product->save();
 
         return back()->with('success', "Stok {$product->name} kini {$product->stock} {$product->unit}.");
+    }
+
+    private function resolveCategoryId(ProductRequest $request): int
+    {
+        if (filled($request->input('new_category'))) {
+            return Category::firstOrCreate([
+                'name' => trim($request->input('new_category')),
+            ])->id;
+        }
+
+        return $request->integer('category_id');
     }
 
     private function handleImage(ProductRequest $request): ?string

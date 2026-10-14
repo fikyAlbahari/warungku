@@ -40,7 +40,7 @@ class ApiConfig {
   /// Dipakai sebagai default di semua platform supaya app langsung terhubung ke
   /// server tanpa menyetel IP LAN. Server ini berjalan di HTTP (belum HTTPS) dan
   /// membalas JSON Laravel di `/api/...`.
-  static const String productionBaseUrl = 'http://kydev.online';
+  static const String productionBaseUrl = 'http://warungku.fikydev.my.id';
 
   /// Default tanpa melihat nilai yang tersimpan.
   ///
@@ -84,11 +84,27 @@ class ApiConfig {
   /// kuota dan bisa hilang, jadi alamat ini bukan pengganti IP LAN untuk pemakaian
   /// harian.
   static List<({String label, String url, String hint})> get suggestions => [
-        (label: 'Online', url: productionBaseUrl, hint: 'Server kydev.online'),
-        (label: 'PC ini (Wi-Fi)', url: suggestionForPhysicalDevice, hint: 'HP Android asli'),
-        (label: 'Emulator Android', url: 'http://10.0.2.2:8000', hint: 'Android Emulator'),
-        (label: 'iOS Simulator', url: 'http://localhost:8000', hint: 'Simulator iPhone'),
-      ];
+    (
+      label: 'Online',
+      url: productionBaseUrl,
+      hint: 'Server warungku.fikydev.my.id',
+    ),
+    (
+      label: 'PC ini (Wi-Fi)',
+      url: suggestionForPhysicalDevice,
+      hint: 'HP Android asli',
+    ),
+    (
+      label: 'Emulator Android',
+      url: 'http://10.0.2.2:8000',
+      hint: 'Android Emulator',
+    ),
+    (
+      label: 'iOS Simulator',
+      url: 'http://localhost:8000',
+      hint: 'Simulator iPhone',
+    ),
+  ];
 
   /// Alamat server yang sedang dipakai. Selalu berakhiran tanpa slash.
   static String get baseUrl => _activeBaseUrl;
@@ -99,8 +115,9 @@ class ApiConfig {
   /// [ApiConfig] adalah kelas statis, jadi perubahan di sini tidak menambah
   /// listener lewat Provider. Notifier ini adalah cara paling murah untuk
   /// menyiarkan perubahannya ke UI.
-  static final ValueNotifier<String> baseUrlChanges =
-      ValueNotifier<String>(_activeBaseUrl);
+  static final ValueNotifier<String> baseUrlChanges = ValueNotifier<String>(
+    _activeBaseUrl,
+  );
 
   static void _publish() {
     if (baseUrlChanges.value != _activeBaseUrl) {
@@ -123,7 +140,9 @@ class ApiConfig {
   static Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getString(_prefsKey);
-    _savedBaseUrl = (saved == null || saved.trim().isEmpty) ? null : _normalize(saved);
+    _savedBaseUrl = (saved == null || saved.trim().isEmpty)
+        ? null
+        : _normalize(saved);
     _setActive(_resolve());
   }
 
@@ -156,7 +175,10 @@ class ApiConfig {
   /// [action] melempar exception.
   ///
   /// Sengaja tidak men-[saveBaseUrl]: probe harus bebas efek samping.
-  static Future<T> withBaseUrl<T>(String url, Future<T> Function() action) async {
+  static Future<T> withBaseUrl<T>(
+    String url,
+    Future<T> Function() action,
+  ) async {
     final previous = _activeBaseUrl;
     final previousTemp = _tempBaseUrl;
     _tempBaseUrl = _normalize(url);
@@ -202,7 +224,11 @@ class ApiConfig {
   static String _normalizeForStorage(String raw) {
     final trimmed = raw.trim();
     if (trimmed.isEmpty) {
-      throw ArgumentError.value(raw, 'url', 'Alamat server tidak boleh kosong.');
+      throw ArgumentError.value(
+        raw,
+        'url',
+        'Alamat server tidak boleh kosong.',
+      );
     }
     return _normalize(trimmed);
   }
@@ -234,9 +260,9 @@ class ApiConfig {
   /// Selain header JSON, otomatis menyertakan
   /// `ngrok-skip-browser-warning` saat alamat aktif berupa tunnel ngrok.
   static Map<String, String> get headers => {
-        ...jsonHeaders,
-        if (isNgrokTunnel) 'ngrok-skip-browser-warning': '1',
-      };
+    ...jsonHeaders,
+    if (isNgrokTunnel) 'ngrok-skip-browser-warning': '1',
+  };
 
   /// Ongkos kirim default. Nilainya dikirim ke server, bukan dihitung di HP,
   /// supaya total di nota dan dashboard admin selalu sama.

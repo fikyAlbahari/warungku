@@ -76,10 +76,22 @@
                     @forelse ($products as $product)
                         <tr class="hover:bg-slate-50/50">
                             <td class="py-2.5 pr-4">
-                                <div class="font-medium text-slate-900">{{ $product->name }}</div>
-                                @if ($product->sku)
-                                    <div class="text-xs text-slate-500">SKU: {{ $product->sku }}</div>
-                                @endif
+                                <div class="flex items-center gap-3">
+                                    @if ($product->image)
+                                        <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}"
+                                             class="h-10 w-10 flex-none rounded-lg border border-slate-200 object-cover">
+                                    @else
+                                        <div class="flex h-10 w-10 flex-none items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-[10px] text-slate-400">
+                                            No Foto
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <div class="font-medium text-slate-900">{{ $product->name }}</div>
+                                        @if ($product->sku)
+                                            <div class="text-xs text-slate-500">SKU: {{ $product->sku }}</div>
+                                        @endif
+                                    </div>
+                                </div>
                             </td>
                             <td class="whitespace-nowrap px-4 py-2.5 text-slate-600">{{ $product->category?->name ?? '-' }}</td>
                             <td class="whitespace-nowrap px-4 py-2.5 text-slate-700">Rp {{ number_format($product->price_modal, 0, ',', '.') }}</td>

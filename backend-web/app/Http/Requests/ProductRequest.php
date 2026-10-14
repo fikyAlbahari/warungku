@@ -17,7 +17,8 @@ class ProductRequest extends FormRequest
         $productId = $this->route('product')?->id;
 
         return [
-            'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'category_id' => ['nullable', 'integer', 'exists:categories,id', 'required_without:new_category'],
+            'new_category' => ['nullable', 'string', 'max:100'],
             'name' => ['required', 'string', 'max:255'],
             'sku' => ['nullable', 'string', 'max:50', Rule::unique('products', 'sku')->ignore($productId)],
             'barcode' => ['nullable', 'string', 'max:50', Rule::unique('products', 'barcode')->ignore($productId)],
@@ -35,6 +36,7 @@ class ProductRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'category_id.required_without' => 'Pilih kategori atau isi nama kategori baru.',
             'price_jual.gte' => 'Harga jual harus lebih besar atau sama dengan harga modal.',
             'image.max' => 'Ukuran foto produk maksimal 2 MB.',
         ];
@@ -42,7 +44,12 @@ class ProductRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $newCategory = $this->input('new_category');
+        $categoryId = $this->input('category_id');
+
         $this->merge([
+            'category_id' => ($categoryId === '__baru__' || blank($categoryId)) ? null : $categoryId,
+            'new_category' => blank($newCategory) ? null : $newCategory,
             'is_active' => $this->boolean('is_active'),
         ]);
     }
